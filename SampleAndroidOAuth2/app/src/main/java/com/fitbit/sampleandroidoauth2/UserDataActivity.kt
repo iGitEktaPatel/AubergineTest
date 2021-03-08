@@ -1,82 +1,43 @@
-package com.fitbit.sampleandroidoauth2;
+package com.fitbit.sampleandroidoauth2
 
-import com.fitbit.authentication.AuthenticationManager;
-import com.fitbit.sampleandroidoauth2.databinding.ActivityUserDataBinding;
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
+import com.fitbit.authentication.AuthenticationManager
+import com.fitbit.sampleandroidoauth2.databinding.ActivityUserDataBinding
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.Intent;
-import androidx.databinding.DataBindingUtil;
-import android.os.Bundle;
-import androidx.viewpager.widget.ViewPager;
-import android.view.View;
-
-public class UserDataActivity extends Activity {
-
-    private ActivityUserDataBinding binding;
-    private UserDataPagerAdapter userDataPagerAdapter;
-
-    public static Intent newIntent(Context context) {
-        return new Intent(context, UserDataActivity.class);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_data);
-        binding.setLoading(false);
-
-        userDataPagerAdapter = new UserDataPagerAdapter(getFragmentManager());
-        binding.viewPager.setAdapter(userDataPagerAdapter);
-
-        binding.viewPager.addOnPageChangeListener(
-                new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
+class UserDataActivity : FragmentActivity() {
+    private var binding: ActivityUserDataBinding? = null
+    private var userDataPagerAdapter: UserDataPagerAdapter? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_data)
+        binding?.loading = false
+        userDataPagerAdapter = UserDataPagerAdapter(supportFragmentManager)
+        binding?.viewPager?.adapter = userDataPagerAdapter
+        binding?.viewPager?.addOnPageChangeListener(
+                object : SimpleOnPageChangeListener() {
+                    override fun onPageSelected(position: Int) {
                         // When swiping between pages, select the
                         // corresponding tab.
-                        getActionBar().setSelectedNavigationItem(position);
+                        actionBar!!.setSelectedNavigationItem(position)
                     }
-                });
+                })
 
-//        addTabs();
     }
 
-    private void addTabs() {
-        final ActionBar actionBar = getActionBar();
-        // Specify that tabs should be displayed in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+    fun onLogoutClick(view: View?) {
+        binding!!.loading = true
+        AuthenticationManager.logout(this)
+    }
 
-        int numberOfTabs = userDataPagerAdapter.getCount();
-        for (int i = 0; i < numberOfTabs; i++) {
-            final int index = i;
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(getString(userDataPagerAdapter.getTitleResourceId(i)))
-                            .setTabListener(new ActionBar.TabListener() {
-                                @Override
-                                public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                                    binding.viewPager.setCurrentItem(index);
-                                }
-
-                                @Override
-                                public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-                                }
-
-                                @Override
-                                public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-                                }
-                            }));
+    companion object {
+        fun newIntent(context: Context?): Intent {
+            return Intent(context, UserDataActivity::class.java)
         }
-    }
-
-
-    public void onLogoutClick(View view) {
-        binding.setLoading(true);
-        AuthenticationManager.logout(this);
     }
 }

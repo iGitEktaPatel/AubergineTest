@@ -1,27 +1,17 @@
-package com.fitbit.api.loaders;
+package com.fitbit.api.loaders
 
-import com.fitbit.authentication.Scope;
+import android.app.Activity
+import android.os.Handler
+import androidx.loader.content.Loader
+import com.fitbit.api.models.DailyActivitySummary
+import com.fitbit.authentication.Scope
 
-import android.app.Activity;
-import android.os.Handler;
-
-public class ResourceLoaderFactory<T> {
-
-    private String urlFormat;
-    private Class<T> classType;
-
-    public ResourceLoaderFactory(String urlFormat, Class<T> classType) {
-        this.urlFormat = urlFormat;
-        this.classType = classType;
-    }
-
-    public ResourceLoader<T> newResourceLoader(Activity contextActivity, Scope[] requiredScopes, String... pathParams) {
-
-        String url = urlFormat;
-        if (pathParams != null && pathParams.length > 0) {
-            url = String.format(urlFormat, pathParams);
+class ResourceLoaderFactory<T>(private val urlFormat: String, private val classType: Class<T>) {
+    fun newResourceLoader(contextActivity: Activity?, requiredScopes: Array<Scope>, vararg pathParams: String?): ResourceLoader<T> {
+        var url = urlFormat
+        if (pathParams != null && pathParams.size > 0) {
+            url = String.format(urlFormat, *pathParams)
         }
-
-        return new ResourceLoader<T>(contextActivity, url, requiredScopes, new Handler(), classType);
+        return ResourceLoader(contextActivity!!, url, requiredScopes, Handler(), classType)
     }
 }

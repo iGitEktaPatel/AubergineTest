@@ -1,62 +1,48 @@
-package com.fitbit.sampleandroidoauth2;
+package com.fitbit.sampleandroidoauth2
+
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import com.fitbit.authentication.AuthenticationManager
+import com.fitbit.authentication.Scope
+import com.fitbit.sampleandroidoauth2.fragments.ActivitiesFragment
+import com.fitbit.sampleandroidoauth2.fragments.InfoFragment
+import java.util.*
+
+class UserDataPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {
+    private val fragments: MutableList<InfoFragment<*>> = ArrayList()
+    private fun containsScope(scope: Scope): Boolean {
+        return AuthenticationManager.getCurrentAccessToken().scopes.contains(scope)
+    }
+
+    override fun getItem(position: Int): Fragment {
+        return /*if (position>=fragments.size)
+            null
+        else*/ fragments[position]
+    }
 
 
-import com.fitbit.authentication.AuthenticationManager;
-import com.fitbit.authentication.Scope;
-import com.fitbit.sampleandroidoauth2.fragments.ActivitiesFragment;
-//import com.fitbit.sampleandroidoauth2.fragments.DeviceFragment;
-import com.fitbit.sampleandroidoauth2.fragments.InfoFragment;
-//import com.fitbit.sampleandroidoauth2.fragments.ProfileFragment;
-//import com.fitbit.sampleandroidoauth2.fragments.WeightLogFragment;
+    override fun getCount(): Int {
+        return fragments.size
+    }
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import androidx.legacy.app.FragmentPagerAdapter;
+    fun getTitleResourceId(index: Int): Int {
+        return fragments[index].titleResourceId
+    }
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class UserDataPagerAdapter extends FragmentPagerAdapter {
-
-    private final List<InfoFragment> fragments = new ArrayList<>();
-
-    public UserDataPagerAdapter(FragmentManager fm) {
-        super(fm);
-
-        fragments.clear();
-//        if (containsScope(Scope.profile)) {
+    init {
+        fragments.clear()
+        //        if (containsScope(Scope.profile)) {
 //            fragments.add(new ProfileFragment());
 //        }
 //        if (containsScope(Scope.settings)) {
 //            fragments.add(new DeviceFragment());
 //        }
         if (containsScope(Scope.activity)) {
-            fragments.add(new ActivitiesFragment());
+            fragments.add(ActivitiesFragment())
         }
-//        if (containsScope(Scope.weight)) {
+        //        if (containsScope(Scope.weight)) {
 //            fragments.add(new WeightLogFragment());
 //        }
-    }
-
-    private boolean containsScope(Scope scope) {
-        return AuthenticationManager.getCurrentAccessToken().getScopes().contains(scope);
-    }
-
-    @Override
-    public Fragment getItem(int position) {
-        if (position >= fragments.size()) {
-            return null;
-        }
-
-        return fragments.get(position);
-    }
-
-    @Override
-    public int getCount() {
-        return fragments.size();
-    }
-
-    public int getTitleResourceId(int index) {
-        return fragments.get(index).getTitleResourceId();
     }
 }

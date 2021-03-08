@@ -1,28 +1,25 @@
-package com.fitbit.api.services;
+package com.fitbit.api.services
 
-import com.fitbit.api.exceptions.MissingScopesException;
-import com.fitbit.api.exceptions.TokenExpiredException;
-import com.fitbit.api.loaders.ResourceLoaderFactory;
-import com.fitbit.api.loaders.ResourceLoaderResult;
-import com.fitbit.api.models.DailyActivitySummary;
-import com.fitbit.authentication.Scope;
+import androidx.fragment.app.FragmentActivity
+import androidx.loader.content.Loader
+import com.fitbit.api.exceptions.MissingScopesException
+import com.fitbit.api.exceptions.TokenExpiredException
+import com.fitbit.api.loaders.ResourceLoader
+import com.fitbit.api.loaders.ResourceLoaderFactory
+import com.fitbit.api.loaders.ResourceLoaderResult
+import com.fitbit.api.models.DailyActivitySummary
+import com.fitbit.authentication.Scope
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
-import android.app.Activity;
-import android.content.Loader;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-public class ActivityService {
-
-    private final static String ACTIVITIES_URL = "https://api.fitbit.com/1/user/-/activities/date/%s.json";
-    private static final ResourceLoaderFactory<DailyActivitySummary> USER_ACTIVITIES_LOADER_FACTORY = new ResourceLoaderFactory<>(ACTIVITIES_URL, DailyActivitySummary.class);
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
-    public static Loader<ResourceLoaderResult<DailyActivitySummary>> getDailyActivitySummaryLoader(Activity activityContext, Date date) throws MissingScopesException, TokenExpiredException {
-        return USER_ACTIVITIES_LOADER_FACTORY.newResourceLoader(activityContext, new Scope[]{Scope.activity}, dateFormat.format(date));
+object ActivityService {
+    private const val ACTIVITIES_URL = "https://api.fitbit.com/1/user/-/activities/date/%s.json"
+    private val USER_ACTIVITIES_LOADER_FACTORY = ResourceLoaderFactory(ACTIVITIES_URL, DailyActivitySummary::class.java)
+    private val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    @JvmStatic
+    @Throws(MissingScopesException::class, TokenExpiredException::class)
+    fun getDailyActivitySummaryLoader(activityContext: FragmentActivity?, date: Date?): Loader<ResourceLoaderResult<DailyActivitySummary?>> {
+        return USER_ACTIVITIES_LOADER_FACTORY.newResourceLoader(activityContext, arrayOf(Scope.activity), dateFormat.format(date))
     }
-
 }

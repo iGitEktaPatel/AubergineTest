@@ -1,61 +1,43 @@
-package com.fitbit.api.loaders;
+package com.fitbit.api.loaders
 
-public class ResourceLoaderResult<T> {
-    private final T result;
-    private final boolean successful;
-    private final Exception exception;
-    private final String errorMessage;
-    private final ResultType resultType;
+import java.lang.Exception
 
-    public enum ResultType {
+class ResourceLoaderResult<T> private constructor(val result: T?, resultType: ResultType, errorMessage: String?, exception: java.lang.Exception?) {
+    val isSuccessful: Boolean
+    val exception: java.lang.Exception?
+    val errorMessage: String?
+    val resultType: ResultType
+
+    enum class ResultType {
         SUCCESS, ERROR, EXCEPTION, LOGGED_OUT
     }
 
-    private ResourceLoaderResult(T result, ResultType resultType, String errorMessage, Exception exception) {
-        this.result = result;
-        this.successful = resultType == ResultType.SUCCESS;
-        this.errorMessage = errorMessage;
-        this.exception = exception;
-        this.resultType = resultType;
-    }
-
-    public static <G> ResourceLoaderResult<G> onSuccess(G result) {
-        return new ResourceLoaderResult<G>(result, ResultType.SUCCESS, null, null);
-    }
-
-    public static <G> ResourceLoaderResult<G> onError(String errorMessage) {
-        return new ResourceLoaderResult<G>(null, ResultType.ERROR, errorMessage, null);
-    }
-
-    public static <G> ResourceLoaderResult<G> onException(Exception exception) {
-        String message = exception.getMessage();
-        if (message == null) {
-            message = exception.getCause().getMessage();
+    companion object {
+        fun <G> onSuccess(result: G): ResourceLoaderResult<G> {
+            return ResourceLoaderResult(result, ResultType.SUCCESS, null, null)
         }
-        return new ResourceLoaderResult<G>(null, ResultType.EXCEPTION, message, exception);
+
+        fun <G> onError(errorMessage: String?): ResourceLoaderResult<G?> {
+            return ResourceLoaderResult(null, ResultType.ERROR, errorMessage, null)
+        }
+
+        fun <G> onException(exception: Exception): ResourceLoaderResult<G?> {
+            var message = exception.message
+            if (message == null) {
+                message = exception.cause!!.message
+            }
+            return ResourceLoaderResult(null, ResultType.EXCEPTION, message, exception)
+        }
+
+        fun <G> onLoggedOut(): ResourceLoaderResult<G?> {
+            return ResourceLoaderResult(null, ResultType.LOGGED_OUT, null, null)
+        }
     }
 
-    public static <G> ResourceLoaderResult<G> onLoggedOut() {
-        return new ResourceLoaderResult<G>(null, ResultType.LOGGED_OUT, null, null);
-    }
-
-    public T getResult() {
-        return result;
-    }
-
-    public boolean isSuccessful() {
-        return successful;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public Exception getException() {
-        return exception;
-    }
-
-    public ResultType getResultType() {
-        return resultType;
+    init {
+        isSuccessful = resultType == ResultType.SUCCESS
+        this.errorMessage = errorMessage
+        this.exception = exception
+        this.resultType = resultType
     }
 }

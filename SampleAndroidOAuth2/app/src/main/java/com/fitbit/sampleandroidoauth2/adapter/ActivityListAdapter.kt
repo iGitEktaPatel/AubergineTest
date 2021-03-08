@@ -1,76 +1,55 @@
-package com.fitbit.sampleandroidoauth2.adapter;
+package com.fitbit.sampleandroidoauth2.adapter
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.fitbit.api.models.ActivityData
+import com.fitbit.sampleandroidoauth2.R
+import java.util.*
+import kotlin.collections.ArrayList
 
-import androidx.recyclerview.widget.RecyclerView;
+class ActivityListAdapter(list: List<ActivityData>?, mContext: Context?) : RecyclerView.Adapter<ActivityListAdapter.ViewHolder>() {
+    var lists: List<ActivityData?> = ArrayList()
+    private val mContext: Context?
 
-import com.fitbit.api.models.ActivityData;
-import com.fitbit.sampleandroidoauth2.R;
 
-import java.util.ArrayList;
-import java.util.List;
+    override fun onCreateViewHolder(parent: ViewGroup,
+                                    viewType: Int): ViewHolder {
+        val vh: RecyclerView.ViewHolder
+        val v = LayoutInflater.from(parent.context).inflate(
+                R.layout.item_activity_list, parent, false)
+        vh = ViewHolder(v)
+        return vh
+    }
 
-public class ActivityListAdapter extends RecyclerView.Adapter {
-    private List<ActivityData> list = new ArrayList<>();
-    private Context mContext;
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        (holder as ViewHolder?)!!.txtName.text = lists[position]?.name
+    }
+
+    override fun getItemCount(): Int {
+        return lists.size
+    }
+
+    /***
+     * @info view holder
+     */
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        val txtName: TextView
+
+        init {
+            txtName = v.findViewById<View>(R.id.txtTitle) as TextView
+        }
+    }
 
     /***
      * @param list = list of activity
      * @param mContext = activity context
      */
-    public ActivityListAdapter(List<ActivityData> list, Context mContext) {
-        this.list = list;
-        this.mContext = mContext;
+    init {
+        lists = list?:ArrayList()
+        this.mContext = mContext
     }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                      int viewType) {
-        RecyclerView.ViewHolder vh;
-        View v = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.item_activity_list, parent, false);
-
-        vh = new ViewHolder(v);
-        return vh;
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-        final ActivityData activityData = (ActivityData) getLists().get(position);
-
-        ((ViewHolder) holder).txtName.setText(activityData.getName());
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return getLists().size();
-    }
-
-
-    /***
-     * @info view holder
-     */
-    private class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtName;
-
-        public ViewHolder(View v) {
-            super(v);
-            txtName = (TextView) v.findViewById(R.id.txtTitle);
-        }
-    }
-
-    public List<ActivityData> getLists() {
-        return this.list;
-    }
-
-    public void setLists(List<ActivityData> keywordLists) {
-        this.list = keywordLists;
-    }
-
 }
