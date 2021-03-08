@@ -1,0 +1,37 @@
+plugins{
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "24.0.3"
+
+    defaultConfig {
+        applicationId "com.fitbit.sampleandroidoauth2"
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':fitbitapi')
+    implementation project(':fitbitauth')
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'com.jjoe64:graphview:4.+'
+    
+    testImplementation 'junit:junit:4.+'
+}
